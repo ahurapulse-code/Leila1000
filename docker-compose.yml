@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: lila
+      POSTGRES_USER: lila
+      POSTGRES_PASSWORD: lila
+    volumes:
+      - lila-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lila -d lila"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://lila:lila@db:5432/lila
+      API_CORS_ORIGINS: http://localhost:8000
+      SESSION_COOKIE_SECURE: "false"
+      LILA_WORKSPACE_NAME: ${LILA_WORKSPACE_NAME:-ملک من}
+      LILA_MANAGER_EMAIL: ${LILA_MANAGER_EMAIL:-manager@example.com}
+      LILA_MANAGER_PASSWORD: ${LILA_MANAGER_PASSWORD:-change-me-now}
+      LILA_MANAGER_NAME: ${LILA_MANAGER_NAME:-مدیر}
+      LILA_OWNER_EMAIL: ${LILA_OWNER_EMAIL:-owner@example.com}
+      LILA_OWNER_PASSWORD: ${LILA_OWNER_PASSWORD:-change-me-now}
+      LILA_OWNER_NAME: ${LILA_OWNER_NAME:-مالک}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  lila-postgres:

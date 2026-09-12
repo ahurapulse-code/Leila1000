@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: lila
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lila-db
+          property: connectionString
+      - key: API_CORS_ORIGINS
+        value: https://lila.onrender.com
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+      - key: SESSION_TTL_DAYS
+        value: "30"
+      - key: LILA_WORKSPACE_NAME
+        value: ملک من
+      - key: LILA_MANAGER_EMAIL
+        sync: false
+      - key: LILA_MANAGER_PASSWORD
+        sync: false
+      - key: LILA_MANAGER_NAME
+        value: مدیر
+      - key: LILA_OWNER_EMAIL
+        sync: false
+      - key: LILA_OWNER_PASSWORD
+        sync: false
+      - key: LILA_OWNER_NAME
+        value: مالک
+
+databases:
+  - name: lila-db
+    plan: 0.1c-256mb
+    databaseName: lila
+    user: lila

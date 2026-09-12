@@ -1,0 +1,13 @@
+.git
+.gitignore
+archive/
+legacy-reference/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.zip
+.env
+.env.*
+!/.env.example
+docs/*.png
+releases/
